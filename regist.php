@@ -134,9 +134,9 @@
 						      <input type="email" name="email" placeholder="您的常用邮箱" class="php-input am-radius" id="js-email" required value="<?php echo session_read_post('email');?>">
 						    </div>
 							</div>
-					<div class="am-form-group am-form-icon">
+					    <div class="am-form-group am-form-icon">
 						    <label for="doc-ipt-3" class="am-u-sm-2 am-form-label">验证码：</label>
-								    <div class="am-u-sm-10">
+						    <div class="am-u-sm-10">
 						      <i class="am-icon-code php-input-icon"></i>
 						      <input type="text" name="verifycode" placeholder="验证码" class="php-input am-radius" required style="width:78%;display:inline-block">
 
@@ -146,8 +146,10 @@
 						<div class="am-form-group ">
 						    <div class="am-u-sm-offset-2 am-u-sm-10">
 						      	<button type="submit" class="am-btn am-btn-primary am-radius php-button" >注册</button>
+						      	<p class="am-text-sm php-text-gray am-kai">温馨提示：如果您的邮箱没有收到邮件，请查看您的垃圾箱；</p>
 						    </div>
 						</div>
+
 
 				 </form>
 			</div>

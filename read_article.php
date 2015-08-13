@@ -9,7 +9,9 @@ require_once __DIR__.'/lib/Medoo.class.php';
 $medoo = @new Medoo($database_config);
 $medoo->query('set names utf8');
 
-if (!empty($_GET['aid']))
+$aid = isset($_GET['aid']) ? $_GET['aid'] : '';
+
+if (!($aid == ''))
 {	
    $article = $medoo->select('article',[
                                             '[>]users' => ['user_id' => 'id']
@@ -21,17 +23,51 @@ if (!empty($_GET['aid']))
                                             'article.user_id',
                                             'article.content',
                                             'users.name',
+                                         
+
                                         ],
                                         [
-                                          'article.id' => $_GET['aid']
+                                          'article.id' => $aid
                                         ])[0];
-  
+  var_dump($article);
+ // die;
+
+ 
+
+   if($_POST){
+        $database_config = require __DIR__.'/config/database.php';
+        require_once __DIR__.'/lib/Medoo.class.php';
+
+        $medoo = @new Medoo($database_config);
+        $medoo->query('set names utf8');
+        $contents = $_POST['contents'];
+        // $user_id = $article['user_id'];
+        $article_id =  $article['id'];
+        var_dump($article_id);
+        // die;
+        $comments = $medoo -> insert('comments', [  'contents'=> $contents,
+                                                    // 'user_id'=> $user_id,
+                                                     'article_id' =>$article_id,
+                                                 ]
+                                     );
+        $show_comments = $medoo ->select('comments','*',[ 'article_id' => $aid,
+                                                    ]);
+
+       $_SESSION['errors']['state'] = 'am-alert-success';
+       $_SESSION['errors']['details'] = ['评论成功'];
+       header('Location:'.$host_url.'read_article.php?aid='.$aid);
+       
+    }
+    
 } else {
 	$_SESSION['errors']['state'] = 'am-alert-warning';
     $_SESSION['errors']['details'] = ['请您通过正确的方式进入读帖页面！'];
 	header('Location:'.$host_url.'index.php');
 	exit;
 }
+  
+
+
 ?>
 <body>
 	<?php include './includes/nav.php'; ?>
@@ -49,7 +85,19 @@ if (!empty($_GET['aid']))
 					   			<a href="<?php echo $host_url; ?>user.php?uid=<?php echo $article['user_id']; ?>"><?php echo $article['name']; ?></a>
                                 &nbsp;于&nbsp;<?php echo $article['created_at']; ?>&nbsp;时发布
 					   		</p>
-					  </div>
+                      </div>
+                       <form action="<?php echo $host_url; ?>read_article.php?aid=<?php echo $aid; ?>" class="am-form am-form-horizontal" method="post" name="contents">
+                            <div class="am-form-group">
+                                <label for="doc-ta-1">评论：</label>
+                                <textarea name="contents" rows="5" cols="140"></textarea>
+                            </div>
+
+                            <p><button type="submit" class="am-btn am-btn-default">评论</button></p>
+        				  
+                      </form>
+
+
+
 				</section>
     		</div>
     	</section>
