@@ -38,7 +38,7 @@
 
             if(isset($_SESSION['user']))//isset — 检测变量是否设置 
             {
-                 echo "<p class='am-text-xl'>已经登录，稍后将会跳转页面！！！！</p>";
+                 echo "<p class='am-text-xl'>已经登录，稍后跳转页面！！！！</p>";
                  require  'jump1.php';
             }
             
