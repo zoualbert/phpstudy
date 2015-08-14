@@ -29,11 +29,13 @@ if (!($aid == ''))
                                         [
                                           'article.id' => $aid
                                         ])[0];
-  var_dump($article);
+  //var_dump($article);
  // die;
 
- 
-
+   $article_id =  $article['id'];
+   $show_comments = $medoo ->select('comments','*',[ 'article_id' => $aid,
+                                                    ]);
+   //var_dump($show_comments);
    if($_POST){
         $database_config = require __DIR__.'/config/database.php';
         require_once __DIR__.'/lib/Medoo.class.php';
@@ -41,21 +43,24 @@ if (!($aid == ''))
         $medoo = @new Medoo($database_config);
         $medoo->query('set names utf8');
         $contents = $_POST['contents'];
-        // $user_id = $article['user_id'];
-        $article_id =  $article['id'];
-        var_dump($article_id);
+        $user_id = $article['user_id'];
+        $username = $_SESSION['user']['name'];
+        //$article_id =  $article['id'];
+       //var_dump($article_id);
         // die;
         $comments = $medoo -> insert('comments', [  'contents'=> $contents,
-                                                    // 'user_id'=> $user_id,
+                                                     'user_id'=> $user_id,
                                                      'article_id' =>$article_id,
+                                                     'created_at' =>  date('Y-m-d H:i:s'),
+                                                     'username' => $username,
                                                  ]
-                                     );
+                                    );
+      
+        $_SESSION['errors']['state'] = 'am-alert-success';
+        $_SESSION['errors']['details'] = ['评论成功'];
         $show_comments = $medoo ->select('comments','*',[ 'article_id' => $aid,
                                                     ]);
-
-       $_SESSION['errors']['state'] = 'am-alert-success';
-       $_SESSION['errors']['details'] = ['评论成功'];
-       header('Location:'.$host_url.'read_article.php?aid='.$aid);
+       // header('Location:'.$host_url.'read_article.php?aid='.$aid);
        
     }
     
@@ -86,10 +91,27 @@ if (!($aid == ''))
                                 &nbsp;于&nbsp;<?php echo $article['created_at']; ?>&nbsp;时发布
 					   		</p>
                       </div>
+
+                        <div class="php-topform-left">
+                            <ul class="am-list">
+                              <?php 
+                                foreach ($show_comments as $key => $show_coms) {
+                                    ?>
+                                    <pre class="am-panel-title"><?php echo $show_coms['contents'];?></pre>
+                                    <p class="php-text-gray am-margin-xs">
+                                        <a href="<?php echo $host_url; ?>user.php?uid=<?php echo $show_coms['user_id']; ?>"><?php echo $show_coms['username']; ?></a>
+                                        &nbsp;于&nbsp;<?php echo $show_coms['created_at']; ?>&nbsp;时发布
+                                    </p> 
+                                    <?php
+                                }
+                              ?>
+                            </ul>
+                        </div>
+
                        <form action="<?php echo $host_url; ?>read_article.php?aid=<?php echo $aid; ?>" class="am-form am-form-horizontal" method="post" name="contents">
                             <div class="am-form-group">
                                 <label for="doc-ta-1">评论：</label>
-                                <textarea name="contents" rows="5" cols="140"></textarea>
+                                <textarea name="contents" rows="5" cols="100"></textarea>
                             </div>
 
                             <p><button type="submit" class="am-btn am-btn-default">评论</button></p>
